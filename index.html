@@ -113,7 +113,7 @@
             var videoElement = document.createElement('a'); // Utilisation d'une balise <a> pour créer un lien
             videoElement.classList.add('video');
             var videoId = video.id.videoId; // Récupérer l'ID de la vidéo
-            videoElement.href = './watch.html?id=' + videoId; // Ajouter l'ID à l'URL de redirection
+            videoElement.href = './watch?id=' + videoId; // Ajouter l'ID à l'URL de redirection
 
             var thumbnailElement = document.createElement('img');
             thumbnailElement.src = video.snippet.thumbnails.medium.url;
