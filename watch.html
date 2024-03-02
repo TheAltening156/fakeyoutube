@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page de lecture de la vidéo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        #video-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        #custom-video {
+            position: absolute; /* Positionnement absolu par rapport au conteneur */
+            top: 20px; /* En haut du conteneur */
+            left: 20px; /* À gauche du conteneur */
+            width: 1320px; /* Largeur de 100% moins la marge */
+            height: 650px;
+        }
+        #video-title {
+            position: fixed;
+            margin-top: 625px;
+            margin-left: 22px;
+            font-size: 28px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div id="video-container">
+    <video id="custom-video" controls>
+        Votre navigateur ne supporte pas la lecture de la vidéo.
+    </video>
+    <div id="video-title"></div>
+</div>
+
+<script>
+    // Fonction pour obtenir les paramètres de l'URL
+    function getUrlParams() {
+        var params = {};
+        window.location.search.substr(1).split('&').forEach(function (param) {
+            var paramSplit = param.split('=');
+            params[paramSplit[0]] = decodeURIComponent(paramSplit[1]);
+        });
+        return params;
+    }
+
+    // Charger la vidéo dans le lecteur personnalisé
+    window.onload = function () {
+        // Obtenir les paramètres de l'URL
+        var params = getUrlParams();
+
+        // Vérifier si l'ID de la vidéo est présent dans les paramètres
+        if (params.id) {
+            // Construire l'URL de redirection vers la vidéo spécifiée
+            var videoUrl = 'https://invidious.privacydev.net/latest_version?id=' + params.id;
+
+            // Remplacer la source du lecteur vidéo personnalisé par la vidéo spécifiée
+            var customVideo = document.getElementById('custom-video');
+            customVideo.src = videoUrl;
+
+            var apiKey = 'AIzaSyCer_ztDdAmZJqLSX1FsNFkb_t1v29A5Ls'; // Remplacez par votre clé API YouTube
+            var apiUrl = 'https://www.googleapis.com/youtube/v3/videos?id=' + params.id + '&key=' + apiKey + '&part=snippet';
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    var videoTitle = data.items[0].snippet.title;
+                    var videoTitleElement = document.getElementById('video-title');
+                    videoTitleElement.textContent = videoTitle;
+                })
+                .catch(error => console.error('Erreur lors de la récupération des données de la vidéo :', error));
+        }
+    };
+</script>
+
+</body>
+</html>
