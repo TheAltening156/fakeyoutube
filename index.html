@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page avec résultats de recherche YouTube</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .search-bar {
+            width: 50%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            margin: 0 auto;
+        }
+        .search-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .video-container {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .video {
+            margin: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 300px; /* Largeur maximale des vidéos */
+            width: 100%; /* Prend toute la largeur disponible */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Ajoute une ombre pour un aspect visuel */
+            padding: 10px; /* Espacement interne */
+            cursor: pointer; /* Curseur pointer pour indiquer qu'il est cliquable */
+            transition: background-color 0.3s ease; /* Transition de couleur de fond */
+            text-decoration: none; /* Supprimer le soulignement du lien */
+            color: #333; /* Couleur du texte */
+        }
+        .thumbnail {
+            width: 100%; /* Largeur maximale pour la miniature */
+            height: auto; /* Hauteur automatique pour maintenir le rapport hauteur-largeur */
+            margin-bottom: 10px; /* Espacement inférieur */
+        }
+        .video-title {
+            text-align: center; /* Centrer le texte du titre */
+            transition: color 0.3s ease; /* Transition de couleur du texte */
+        }
+        .video:hover {
+            background-color: #f9f9f9; /* Changement de couleur de fond au survol */
+        }
+        .video:hover .video-title {
+            text-decoration: underline; /* Souligner le titre au survol */
+            color: black; /* Couleur du texte en noir */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <form id="searchForm">
+        <input type="text" class="search-bar" id="searchInput" placeholder="Rechercher...">
+        <button type="submit" class="search-button">Rechercher</button>
+    </form>
+    <div class="video-container" id="videoContainer"></div>
+</div>
+
+<script>
+    document.getElementById('searchForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Empêche le rechargement de la page
+
+        var searchInput = document.getElementById('searchInput').value;
+        var apiKey = 'AIzaSyCer_ztDdAmZJqLSX1FsNFkb_t1v29A5Ls'; // Clé API YouTube
+
+        // URL de l'API YouTube
+        var url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&q=' + encodeURIComponent(searchInput) + '&key=' + apiKey;
+
+        // Envoie d'une requête AJAX GET vers l'API YouTube
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    console.log('Requête envoyée avec succès');
+                    var response = JSON.parse(xhr.responseText);
+                    displayResults(response.items);
+                } else {
+                    console.error('Erreur lors de l\'envoi de la requête');
+                }
+            }
+        };
+        xhr.send();
+    });
+
+    function displayResults(videos) {
+        var videoContainer = document.getElementById('videoContainer');
+        videoContainer.innerHTML = '';
+
+        videos.forEach(function(video) {
+            var videoElement = document.createElement('a'); // Utilisation d'une balise <a> pour créer un lien
+            videoElement.classList.add('video');
+            var videoId = video.id.videoId; // Récupérer l'ID de la vidéo
+            videoElement.href = './watch.html?id=' + videoId; // Ajouter l'ID à l'URL de redirection
+
+            var thumbnailElement = document.createElement('img');
+            thumbnailElement.src = video.snippet.thumbnails.medium.url;
+            thumbnailElement.classList.add('thumbnail');
+
+            var titleElement = document.createElement('h2');
+            titleElement.classList.add('video-title');
+            titleElement.innerHTML = video.snippet.title;
+
+            videoElement.appendChild(thumbnailElement);
+            videoElement.appendChild(titleElement);
+
+            videoContainer.appendChild(videoElement);
+        });
+    }
+</script>
+
+</body>
+</html>
