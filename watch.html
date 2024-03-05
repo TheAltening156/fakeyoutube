@@ -7,6 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: white;
             margin: 0;
             padding: 0;
         }
@@ -17,15 +18,30 @@
         #custom-video {
             position: absolute; /* Positionnement absolu par rapport au conteneur */
             top: 20px; /* En haut du conteneur */
-            left: 20px; /* À gauche du conteneur */
-            width: 1320px; /* Largeur de 100% moins la marge */
+            left: 80px; /* À gauche du conteneur */
+            
+            /*width: calc(100% - 40px) ; /* Largeur de 100% moins la marge */
             height: 650px;
         }
+        #channel-img {
+            position: absolute;
+            width: 55px; /* Largeur maximale pour la miniature */
+            height: auto; /* Hauteur automatique pour maintenir le rapport hauteur-largeur */
+            margin-top: 677px; /* Espacement inférieur */
+            left: 80px
+        }
         #video-title {
-            position: fixed;
-            margin-top: 625px;
-            margin-left: 22px;
+            position: absolute;
+            margin-top: 628px;
+            margin-left: 80px;
             font-size: 28px;
+            color: #333;
+        }
+        #channel-title {
+            position: absolute;
+            margin-top: 690px;
+            left: 150px;
+            font-size: 20px;
             color: #333;
         }
     </style>
@@ -36,7 +52,9 @@
     <video id="custom-video" controls>
         Votre navigateur ne supporte pas la lecture de la vidéo.
     </video>
+    <img id="channel-img"></img>
     <div id="video-title"></div>
+    <div id="channel-title"></div>
 </div>
 
 <script>
@@ -65,15 +83,28 @@
             customVideo.src = videoUrl;
 
             var apiKey = 'AIzaSyCer_ztDdAmZJqLSX1FsNFkb_t1v29A5Ls'; // Remplacez par votre clé API YouTube
-            var apiUrl = 'https://www.googleapis.com/youtube/v3/videos?id=' + params.id + '&key=' + apiKey + '&part=snippet';
-            fetch(apiUrl)
+            var videoUrl = 'https://www.googleapis.com/youtube/v3/videos?id=' + params.id + '&key=' + apiKey + '&part=snippet';
+            fetch(videoUrl)
                 .then(response => response.json())
                 .then(data => {
                     var videoTitle = data.items[0].snippet.title;
                     var videoTitleElement = document.getElementById('video-title');
                     videoTitleElement.textContent = videoTitle;
-                })
-                .catch(error => console.error('Erreur lors de la récupération des données de la vidéo :', error));
+                var channelUrl = 'https://www.googleapis.com/youtube/v3/channels?id=' + data.items[0].snippet.channelId + '&key=' + apiKey + '&part=snippet';
+                fetch(channelUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        var channelTitle = data.items[0].snippet.title;
+                        var channelTitleElement = document.getElementById('channel-title');
+                        channelTitleElement.textContent = channelTitle;
+                        
+                        var channelImg = data.items[0].snippet.thumbnails.default.url;
+                        var channelImgElement = document.getElementById('channel-img');
+                        channelImgElement.src = channelImg;
+                        
+                    
+                    }).catch(error => console.error('Erreur lors de la récupération des données de la chaîne :', error));
+             }).catch(error => console.error('Erreur lors de la récupération des données de la vidéo :', error));
         }
     };
 </script>
