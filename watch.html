@@ -76,7 +76,7 @@
         // Vérifier si l'ID de la vidéo est présent dans les paramètres
         if (params.id) {
             // Construire l'URL de redirection vers la vidéo spécifiée
-            var videoUrl = 'https://inv.nadeko.net/latest_version?id=' + params.id;
+            var videoUrl = 'https://inv.nadeko.net/latest_version?id=' + params.id + '&itag=18';
 
             // Remplacer la source du lecteur vidéo personnalisé par la vidéo spécifiée
             var customVideo = document.getElementById('custom-video');
